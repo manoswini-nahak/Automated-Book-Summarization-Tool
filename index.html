@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina - Automated Book Summarization</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-book-open-reader"></i>
+                <h1>Lumina<span>AI</span></h1>
+            </div>
+            <p class="subtitle">Simplify learning from large texts in seconds.</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <section id="upload-section" class="active">
+                <div class="upload-zone" id="drop-zone">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <h2>Drag & Drop your Book or Paper</h2>
+                    <p>Supports PDF, TXT, EPUB (Max 50MB)</p>
+                    <input type="file" id="file-input" hidden accept=".pdf,.txt,.epub">
+                    <button class="btn-primary" onclick="if(typeof handleDemoUpload === 'function') handleDemoUpload(); else document.getElementById('file-input').click()">Browse Files</button>
+                </div>
+            </section>
+
+            <!-- Processing Section -->
+            <section id="processing-section" class="hidden">
+                <div class="loader-container">
+                    <div class="spinner"></div>
+                    <h2 id="loading-text">Analyzing text...</h2>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="hidden">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="summary"><i class="fa-solid fa-align-left"></i> Summary</button>
+                    <button class="tab-btn" data-tab="key-points"><i class="fa-solid fa-list-check"></i> Key Points</button>
+                    <button class="tab-btn" data-tab="flashcards"><i class="fa-solid fa-clone"></i> Flashcards</button>
+                    <button class="tab-btn" data-tab="qa"><i class="fa-solid fa-circle-question"></i> Q&A</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Summary Tab -->
+                    <div id="summary" class="tab-pane active">
+                        <div class="glass-card">
+                            <h3>Executive Summary</h3>
+                            <div id="summary-content" class="content-text"></div>
+                        </div>
+                    </div>
+
+                    <!-- Key Points Tab -->
+                    <div id="key-points" class="tab-pane hidden">
+                        <div class="glass-card">
+                            <h3>Crucial Takeaways</h3>
+                            <ul id="key-points-content" class="styled-list"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Flashcards Tab -->
+                    <div id="flashcards" class="tab-pane hidden">
+                        <div class="flashcard-container">
+                            <div class="flashcard" id="current-flashcard" onclick="this.classList.toggle('flipped')">
+                                <div class="flashcard-inner">
+                                    <div class="flashcard-front">
+                                        <span class="card-label">Question</span>
+                                        <p id="fc-q"></p>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <span class="card-label">Answer</span>
+                                        <p id="fc-a"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flashcard-controls">
+                            <button class="btn-icon" id="prev-card"><i class="fa-solid fa-arrow-left"></i></button>
+                            <span id="card-counter">1 / 5</span>
+                            <button class="btn-icon" id="next-card"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Q&A Tab -->
+                    <div id="qa" class="tab-pane hidden">
+                        <div class="glass-card">
+                            <h3>Generated Q&A</h3>
+                            <div id="qa-content" class="accordion"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn-secondary" id="btn-reset"><i class="fa-solid fa-rotate-left"></i> Summarize Another</button>
+                    <button class="btn-primary"><i class="fa-solid fa-download"></i> Export Notes</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
