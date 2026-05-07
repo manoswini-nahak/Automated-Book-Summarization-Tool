@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
+    const textInput = document.getElementById('text-input');
+    const btnSummarizeText = document.getElementById('btn-summarize-text');
     const uploadSection = document.getElementById('upload-section');
     const processingSection = document.getElementById('processing-section');
     const resultsSection = document.getElementById('results-section');
@@ -10,6 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabPanes = document.querySelectorAll('.tab-pane');
     const btnReset = document.getElementById('btn-reset');
+
+    // MVP DOM Elements
+    const btnAudioSummary = document.getElementById('btn-audio-summary');
+    const metricAcademic = document.getElementById('metric-academic');
+    const metricReadtime = document.getElementById('metric-readtime');
+    const exportOptions = document.querySelectorAll('.export-option');
+    let synth = window.speechSynthesis;
+    let isSpeaking = false;
 
     // Mock Data
     const mockData = {
@@ -58,12 +68,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Direct Text Input Handling ---
+    if(btnSummarizeText) {
+        btnSummarizeText.addEventListener('click', () => {
+            const text = textInput.value.trim();
+            if (text) {
+                processText(text);
+            } else {
+                alert('Please enter some text to summarize.');
+            }
+        });
+    }
+
     // --- File Processing Simulation ---
     window.handleDemoUpload = () => {
         handleFile(new File(['dummy'], 'demo.pdf'));
     };
 
     function handleFile(file) {
+        if (file.type === "text/plain" || file.name.endsWith('.txt')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                processText(e.target.result);
+            };
+            reader.readAsText(file);
+        } else {
+            // For non-txt files, simulate with mock text
+            processText("Simulated text extraction from " + file.name + ".\n\n" + mockData.summary);
+        }
+    }
+
+    function processText(text) {
         // Show processing state
         switchSection(uploadSection, processingSection);
         
@@ -92,11 +127,72 @@ document.addEventListener('DOMContentLoaded', () => {
             if (progressValue === 100) {
                 clearInterval(interval);
                 setTimeout(() => {
+                    generateDynamicResults(text);
                     populateResults();
                     switchSection(processingSection, resultsSection);
                 }, 500);
             }
         }, 300);
+    }
+
+    function generateDynamicResults(text) {
+        // Very basic mock summarization based on input text
+        const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+        
+        if (sentences.length <= 3) {
+            mockData.summary = text;
+            mockData.keyPoints = sentences.map(s => s.trim()).filter(s => s.length > 0);
+        } else {
+            // Pick first few and last few sentences as a fake summary
+            const summarySentences = [
+                sentences[0],
+                sentences[Math.floor(sentences.length / 2)],
+                sentences[sentences.length - 1]
+            ];
+            mockData.summary = summarySentences.join(' ').trim();
+            
+            // Randomly select 3-5 sentences for key points
+            mockData.keyPoints = [];
+            const numPoints = Math.min(5, sentences.length);
+            for(let i=0; i<numPoints; i++) {
+                const idx = (i * Math.floor(sentences.length / numPoints)) % sentences.length;
+                mockData.keyPoints.push(sentences[idx].trim());
+            }
+        }
+        
+        // Ensure we don't have empty arrays
+        if(!mockData.keyPoints || mockData.keyPoints.length === 0) mockData.keyPoints = ["No key points extracted."];
+        
+        // Generate pseudo-flashcards and QA by picking longer words
+        const words = text.split(/[\s,.;()]+/).filter(w => w.length > 6);
+        // unique words
+        const uniqueWords = [...new Set(words)];
+        
+        if (uniqueWords.length > 0) {
+             mockData.flashcards = uniqueWords.slice(0, 5).map(w => ({
+                 q: `What is the significance of "${w}" in the text?`,
+                 a: `The term "${w}" is used as a key concept in the provided document.`
+             }));
+             mockData.qa = uniqueWords.slice(0, 3).map(w => ({
+                 q: `How does the text describe "${w}"?`,
+                 a: `It presents "${w}" as an important element of the overall discussion.`
+             }));
+        }
+
+        // MVP Feature: Academic Insights Calculation
+        const allWords = text.trim().split(/\s+/);
+        const wordCount = allWords.length || 1;
+        const avgWordLength = allWords.reduce((sum, word) => sum + word.length, 0) / wordCount;
+        
+        let academicTone = "Conversational";
+        if (avgWordLength > 6) academicTone = "Post-Graduate";
+        else if (avgWordLength > 5.2) academicTone = "Undergraduate";
+        else if (avgWordLength > 4.5) academicTone = "High School";
+
+        const readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
+        if(metricAcademic) metricAcademic.innerText = academicTone;
+        if(metricReadtime) metricReadtime.innerText = `${readTimeMinutes} min`;
     }
 
     function switchSection(hideSec, showSec) {
@@ -205,12 +301,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- MVP Feature: Audio Summary (Text-to-Speech) ---
+    if(btnAudioSummary) {
+        btnAudioSummary.addEventListener('click', () => {
+            if(!synth) return;
+            
+            if(isSpeaking) {
+                synth.cancel();
+                isSpeaking = false;
+                btnAudioSummary.classList.remove('playing');
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(mockData.summary);
+            utterance.onend = () => {
+                isSpeaking = false;
+                btnAudioSummary.classList.remove('playing');
+            };
+            
+            synth.speak(utterance);
+            isSpeaking = true;
+            btnAudioSummary.classList.add('playing');
+        });
+    }
+
+    // --- MVP Feature: Export to LMS/Study Group ---
+    exportOptions.forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = option.getAttribute('data-type');
+            let content = `--- LUMINA AUTOMATED SUMMARY ---\n\n${mockData.summary}\n\n`;
+            content += `--- KEY POINTS ---\n${mockData.keyPoints.map(k => "- " + k).join('\n')}\n`;
+            
+            const blob = new Blob([content], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `lumina_export_${type}.txt`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+        });
+    });
+
     // --- Reset ---
     btnReset.addEventListener('click', () => {
+        if(synth && isSpeaking) {
+            synth.cancel();
+            isSpeaking = false;
+            if(btnAudioSummary) btnAudioSummary.classList.remove('playing');
+        }
         progress.style.width = '0%';
         loadingText.innerText = "Analyzing text...";
         currentCardIndex = 0;
         fileInput.value = '';
+        if(textInput) textInput.value = '';
         switchSection(resultsSection, uploadSection);
     });
 });
