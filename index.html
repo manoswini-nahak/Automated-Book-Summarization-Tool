@@ -20,14 +20,37 @@
         </header>
 
         <main>
-            <!-- Upload Section -->
+            <!-- Input Section -->
             <section id="upload-section" class="active">
-                <div class="upload-zone" id="drop-zone">
-                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-                    <h2>Drag & Drop your Book or Paper</h2>
-                    <p>Supports PDF, TXT, EPUB (Max 50MB)</p>
-                    <input type="file" id="file-input" hidden accept=".pdf,.txt,.epub">
-                    <button class="btn-primary" onclick="if(typeof handleDemoUpload === 'function') handleDemoUpload(); else document.getElementById('file-input').click()">Browse Files</button>
+                <div class="input-container">
+                    <div class="text-input-area">
+                        <h2><i class="fa-solid fa-keyboard"></i> Paste Text</h2>
+                        <textarea id="text-input" placeholder="Paste your article, book excerpt, or research paper here..."></textarea>
+                        <button class="btn-primary" id="btn-summarize-text">Summarize Text</button>
+                    </div>
+                    
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="upload-zone" id="drop-zone">
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <h2>Upload Document</h2>
+                        <p>Supports .TXT, .PDF, .EPUB (Max 50MB)</p>
+                        <input type="file" id="file-input" hidden accept=".pdf,.txt,.epub">
+                        <button class="btn-secondary" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                    </div>
+
+                    <div class="privacy-toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" id="privacy-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <div class="privacy-info">
+                            <strong>Local On-Device Processing</strong>
+                            <span>Data never leaves your browser (High Privacy)</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -44,6 +67,30 @@
 
             <!-- Results Section -->
             <section id="results-section" class="hidden">
+                <div class="insights-dashboard">
+                    <div class="insight-card">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <div>
+                            <h4>Data Privacy</h4>
+                            <p id="metric-originality">100% Secure (Local)</p>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <div>
+                            <h4>Academic Tone</h4>
+                            <p id="metric-academic">Analyzing...</p>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <h4>Est. Read Time</h4>
+                            <p id="metric-readtime">-- min</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="tabs">
                     <button class="tab-btn active" data-tab="summary"><i class="fa-solid fa-align-left"></i> Summary</button>
                     <button class="tab-btn" data-tab="key-points"><i class="fa-solid fa-list-check"></i> Key Points</button>
@@ -55,7 +102,10 @@
                     <!-- Summary Tab -->
                     <div id="summary" class="tab-pane active">
                         <div class="glass-card">
-                            <h3>Executive Summary</h3>
+                            <div class="card-header">
+                                <h3>Executive Summary</h3>
+                                <button class="btn-icon" id="btn-audio-summary" title="Listen to Summary"><i class="fa-solid fa-volume-high"></i></button>
+                            </div>
                             <div id="summary-content" class="content-text"></div>
                         </div>
                     </div>
@@ -102,7 +152,13 @@
                 
                 <div class="actions">
                     <button class="btn-secondary" id="btn-reset"><i class="fa-solid fa-rotate-left"></i> Summarize Another</button>
-                    <button class="btn-primary"><i class="fa-solid fa-download"></i> Export Notes</button>
+                    <div class="export-dropdown">
+                        <button class="btn-primary" id="btn-export-main"><i class="fa-solid fa-download"></i> Export Notes <i class="fa-solid fa-caret-down"></i></button>
+                        <div class="export-content">
+                            <a href="#" class="export-option" data-type="canvas"><i class="fa-solid fa-file-lines"></i> Export to Canvas/LMS</a>
+                            <a href="#" class="export-option" data-type="group"><i class="fa-solid fa-users"></i> Share with Study Group</a>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
