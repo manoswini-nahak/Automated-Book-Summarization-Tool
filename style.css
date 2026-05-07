@@ -146,14 +146,79 @@ button {
     color: var(--primary);
 }
 
+/* Input Container */
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.text-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.text-input-area h2 {
+    font-size: 1.2rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.text-input-area textarea {
+    width: 100%;
+    min-height: 200px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.text-input-area textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(0,0,0,0.3);
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider span {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 /* Upload Zone */
 .upload-zone {
-    background: var(--glass-bg);
     border: 2px dashed var(--border-color);
     border-radius: 16px;
-    padding: 4rem 2rem;
+    padding: 2rem;
     text-align: center;
-    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
 }
 
@@ -163,9 +228,9 @@ button {
 }
 
 .upload-icon {
-    font-size: 4rem;
+    font-size: 3rem;
     color: var(--primary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .upload-zone h2 {
@@ -175,7 +240,7 @@ button {
 
 .upload-zone p {
     color: var(--text-muted);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Loading State */
@@ -435,4 +500,185 @@ button {
     .actions button {
         width: 100%;
     }
+}
+
+/* MVP Features - Privacy Toggle */
+.privacy-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--surface-color);
+    transition: .4s;
+    border: 1px solid var(--border-color);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.privacy-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+}
+.privacy-info strong {
+    color: var(--text-main);
+}
+.privacy-info span {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* MVP Features - Insights Dashboard */
+.insights-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.insight-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    backdrop-filter: blur(5px);
+}
+
+.insight-card i {
+    font-size: 1.5rem;
+    color: var(--accent);
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.8rem;
+    border-radius: 8px;
+}
+
+.insight-card h4 {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+}
+
+.insight-card p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Card Header for Audio */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.card-header h3 {
+    margin-bottom: 0;
+}
+#btn-audio-summary {
+    color: var(--primary);
+}
+#btn-audio-summary.playing {
+    color: #10b981; /* green */
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* MVP Features - Export Dropdown */
+.export-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.export-content {
+    display: none;
+    position: absolute;
+    bottom: 100%; /* drop up since it's at bottom */
+    right: 0;
+    background-color: var(--surface-color);
+    min-width: 200px;
+    box-shadow: 0 -8px 16px rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.export-dropdown:hover .export-content {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.export-option {
+    color: var(--text-main);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: background 0.2s;
+    font-size: 0.9rem;
+}
+
+.export-option:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: var(--primary);
 }
