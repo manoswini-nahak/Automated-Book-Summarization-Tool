@@ -330,14 +330,14 @@ document.addEventListener('DOMContentLoaded', () => {
         option.addEventListener('click', (e) => {
             e.preventDefault();
             const type = option.getAttribute('data-type');
-            let content = `--- LUMINA AUTOMATED SUMMARY ---\n\n${mockData.summary}\n\n`;
+            let content = `--- SHIKSHA AUTOMATED SUMMARY ---\n\n${mockData.summary}\n\n`;
             content += `--- KEY POINTS ---\n${mockData.keyPoints.map(k => "- " + k).join('\n')}\n`;
             
             const blob = new Blob([content], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `lumina_export_${type}.txt`;
+            a.download = `shiksha_export_${type}.txt`;
             a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
